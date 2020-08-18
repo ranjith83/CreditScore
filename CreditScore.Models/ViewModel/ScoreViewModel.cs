@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CreditScore.Models.ViewModel
 {
-    public class ScoreViewModel
+    public class ScoreJsonViewModel
     {
         public bool transactionCompleted { get; set; }
         public bool hasErrors { get; set; }
@@ -13,24 +13,6 @@ namespace CreditScore.Models.ViewModel
         public string returnData { get; set; }
     }
 
-    public class Reason
-    {
-        public string reasonCode { get; set; }
-        public string reasonDescription { get; set; }
-    }
-
-    public class Result
-    {
-        public string resultType { get; set; }
-        public string score { get; set; }
-        public List<Reason> reasons { get; set; }
-    }
-
-    public class ReturnData
-    {
-        public string idNumber { get; set; }
-        public List<Result> results { get; set; }
-    }
 
 
 }

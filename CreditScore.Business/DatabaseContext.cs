@@ -16,6 +16,9 @@ namespace CreditScore.Business
         public DbSet<Company> Company { get; set; }
         
         public DbSet<Customer> Customer { get; set; }
-       
+
+        public DbSet<CreditInquires> CreditInquires { get; set; }
+
+
     }
 }

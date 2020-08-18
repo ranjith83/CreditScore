@@ -21,8 +21,8 @@ export class CustomerService {
 
   }
 
-  invokeScore(username: string, password: string) {
-    return this.http.post<any>(this.url + 'InvokeScore', { username, password });
+  invokeScore(username: string, password: string, batchId: string, idNumber: string) {
+    return this.http.post<any>(this.url + 'InvokeScore', { username, password, batchId, idNumber });
       //.pipe(map(user => {
       //  // store user details and jwt token in local storage to keep user logged in between page refreshes
       //  localStorage.setItem('currentUser', JSON.stringify(user));

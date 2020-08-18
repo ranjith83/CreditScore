@@ -5,14 +5,28 @@
 
     <div class="form-group">
       <label for="firstName">UserName</label>
-      <input type="text" formControlName="userName" class="form-control" />
+      <input type="text" formControlName="userName" class="form-control" value="95268-1"/>
       <!--<div *ngIf="submitted && f.firstName.errors" class="invalid-feedback">-->
       <!--<div *ngIf="f.firstName.errors.required">First Name is required</div>
       </div>-->
     </div>
     <div class="form-group">
       <label for="lastName">Password</label>
-      <input type="password" formControlName="password" class="form-control" />
+      <input type="password" formControlName="password" class="form-control" value="devtest"  />
+      <!--<div *ngIf="submitted && f.lastName.errors" class="invalid-feedback">-->
+      <!--<div *ngIf="f.lastName.errors.required">Last Name is required</div>
+      </div>-->
+    </div>
+    <div class="form-group">
+      <label for="batchID">Batch ID</label>
+      <input type="text" formControlName="batchID" class="form-control" value="1212121"/>
+      <!--<div *ngIf="submitted && f.lastName.errors" class="invalid-feedback">-->
+      <!--<div *ngIf="f.lastName.errors.required">Last Name is required</div>
+      </div>-->
+    </div>
+    <div class="form-group">
+      <label for="idNumber">ID Number</label>
+      <input type="text" formControlName="idNumber" class="form-control"  value="2903245665081"/>
       <!--<div *ngIf="submitted && f.lastName.errors" class="invalid-feedback">-->
       <!--<div *ngIf="f.lastName.errors.required">Last Name is required</div>
       </div>-->
@@ -23,4 +37,33 @@
     </button>
 
   </div>
-  </form>
+</form>
+
+<div>
+  <!-- <p *ngIf="!userDetails"><em>Loading...</em></p>-->
+  <a style="cursor: pointer" (click)="exportexcel()">
+    <article> Download as Excel <span class="glyphicon glyphicon-file"></span></article>
+  </a>
+  <table class='table table-striped' aria-labelledby="tableLabel" id="credit-table">
+    <thead>
+      <tr>
+        <th>User Name</th>
+        <th>First Name</th>
+        <th>Sur name</th>
+        <th>ID Number</th>
+        <th>Score</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let credits of creditInquiries">
+        <td>{{ userDetails.username }}</td>
+        <td>{{ userDetails.firstName }}</td>
+        <td>{{ userDetails.surName }}</td>
+        <td>{{ credits.idNumber }}</td>
+        <td>{{ credits.score }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+

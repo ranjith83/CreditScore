@@ -9,6 +9,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Reflection;
+using AutoMapper;
 
 namespace CreditScore.Business
 {
@@ -16,13 +18,15 @@ namespace CreditScore.Business
     {
         private readonly DatabaseContext _context;
         private readonly IUserService _userService;
+        private readonly IMapper _mapper;
 
         //private readonly AppSettings _appSettings;
 
-        public CustomerService(DatabaseContext context, IUserService userService)
+        public CustomerService(DatabaseContext context, IUserService userService, IMapper mapper)
         {
             _context = context;
             _userService = userService;
+            _mapper = mapper;
         }
 
         public List<Customer> ReadAndInsertCustomer(string filePath)
@@ -71,21 +75,81 @@ namespace CreditScore.Business
         }
 
 
-        public bool IsCompanyBalanceAvailable(string username, string password)
+        public Tuple<long, long> IsCompanyBalanceAvailable(string username, string password)
         {
-
+            Tuple<long, long> returnVal = null;
 
             var userCompany = (from company in _context.Company
                                join user in _context.User on company.Id equals user.CompanyId
                                where user.UserName == username
-                               select new { company.Balance, user.PasswordHash }).FirstOrDefault();
+                               select new { company.Balance, companyId = company.Id, UserId = user.Id, user.PasswordHash }).FirstOrDefault();
 
             if (userCompany != null && userCompany.PasswordHash != String.Empty)
                 if (_userService.VerifyPassword(userCompany.PasswordHash, password))
                     if (userCompany.Balance >= 1)
-                        return true;
+                        returnVal = Tuple.Create(userCompany.companyId, userCompany.UserId);
 
-            return false;
+            return returnVal;
+        }
+
+        public bool UpdateCompanyBalance(string username)
+        {
+
+            var userCompany = (from company in _context.Company
+                               join user in _context.User on company.Id equals user.CompanyId
+                               where user.UserName == username
+                               select company).FirstOrDefault();
+
+            userCompany.Balance -= 1;
+            _context.SaveChanges();
+            return true;
+        }
+
+        public List<CreditInquiresViewModel> AddCustomerInquiry(ScoreDataViewModel scoreDataViewModel, long customerID, long userID, long batchId)
+        {
+            List<CreditInquiresViewModel> creditInquiresViewModels = new List<CreditInquiresViewModel>();
+            try
+            {
+                if (scoreDataViewModel.results.Count > 0)
+                {
+                    foreach (var inquiryData in scoreDataViewModel.results)
+                    {
+                        CreditInquiresViewModel creditInquiresVM = new CreditInquiresViewModel();
+                        Type creditInquiryType = typeof(CreditInquiresViewModel);
+
+                        creditInquiresVM.Score = Convert.ToInt32(inquiryData.score);
+                        creditInquiresVM.Success = true;
+                        creditInquiresVM.CustomerID = customerID;
+                        creditInquiresVM.UserID = userID;
+                        creditInquiresVM.BatchID = batchId;
+
+                        int i = 1;
+                        foreach (var reason in inquiryData.reasons)
+                        {
+                            PropertyInfo reasonCode = creditInquiryType.GetProperty("ReasonCode" + i);
+                            reasonCode.SetValue(creditInquiresVM, inquiryData.reasons[i-1].reasonCode);
+
+                            PropertyInfo reasonDescription = creditInquiryType.GetProperty("Description" + i);
+                            reasonCode.SetValue(creditInquiresVM, inquiryData.reasons[i-1].reasonDescription);
+
+                            i++;
+                        }
+                        creditInquiresViewModels.Add(creditInquiresVM);
+                        var creditInquiredMap = _mapper.Map<CreditInquires>(creditInquiresVM);
+
+                        _context.CreditInquires.Add(creditInquiredMap);
+                    }
+
+                    _context.SaveChanges();
+                }
+            }
+            catch(Exception ex)
+            {
+                return creditInquiresViewModels;
+            }
+
+
+            return creditInquiresViewModels;
         }
     }
 }

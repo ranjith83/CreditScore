@@ -1,5 +1,6 @@
 //using CreditScore.Business;
 //using CreditScore.Interface;
+using AutoMapper;
 using CreditScore.Business;
 using CreditScore.Helpers;
 using CreditScore.Interface;
@@ -35,6 +36,8 @@ namespace CreditScore
                 configuration.RootPath = "ClientApp/dist";
             });
 
+            services.AddAutoMapper(typeof(Startup));
+
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
             var connection = Configuration.GetConnectionString("DatabaseConnection");
@@ -52,6 +55,8 @@ namespace CreditScore
             services.AddScoped<ICustomerService, CustomerService>();
 
             services.AddScoped<ICompanyService, CompanyService>();
+
+            services.AddControllers().AddNewtonsoftJson();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

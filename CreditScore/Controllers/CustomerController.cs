@@ -39,7 +39,6 @@ namespace CreditScore.Controllers
             _configuration = configuration;
 
             scoreServiceURL = _configuration.GetValue<string>("AppSettings:ScoreServiceURL");
-            iDNumber = _configuration.GetValue<string>("AppSettings:IdNumber");
             resultType = _configuration.GetValue<string>("AppSettings:ResultType");
             myOrigin = _configuration.GetValue<string>("AppSettings:MyOrigin");
             scoreApiVersion = _configuration.GetValue<string>("AppSettings:ScoreAPIVersion");
@@ -86,24 +85,30 @@ namespace CreditScore.Controllers
         private static readonly HttpClient client = new HttpClient();
 
         [HttpPost("InvokeScore")]
-        public async Task<IActionResult> InvokeScore(AuthenticateRequest authenticateRequest )
+        public async Task<IActionResult> InvokeScore(ScoreAPIRequest scoreAPIRequest )
         {
 
-            object isBalance = null;
+            List<CreditInquiresViewModel> creditInquiresViewModels = null;
+            ScoreDataViewModel scoreDataView = null;
 
-            if( _customerService.IsCompanyBalanceAvailable(authenticateRequest.Username, authenticateRequest.Password))
-                isBalance = await InvokeScoreAPI(authenticateRequest.Username, authenticateRequest.Password);
+            var userCompany = _customerService.IsCompanyBalanceAvailable(scoreAPIRequest.Username, scoreAPIRequest.Password);
 
-            return Ok(isBalance);
+            if (userCompany != null)
+                scoreDataView = await InvokeScoreAPI(scoreAPIRequest);
+
+            if (_customerService.UpdateCompanyBalance(scoreAPIRequest.Username))
+                creditInquiresViewModels = _customerService.AddCustomerInquiry(scoreDataView, userCompany.Item1, userCompany.Item2, scoreAPIRequest.BatchId);
+
+            return Ok(creditInquiresViewModels);
         }
 
-        private async Task<object> InvokeScoreAPI(string userName, string password)
+        private async Task<ScoreDataViewModel> InvokeScoreAPI(ScoreAPIRequest scoreAPI)
         {
-            ScoreViewModel jsonResponse = null;
-
+            ScoreDataViewModel scoreDataViewModel = null;
+            ScoreJsonViewModel scoreJsonViewModel = null;
             try
             {
-                var builder = new UriBuilder($"{scoreServiceURL}/{userName}/{password}/{myOrigin}/{scoreApiVersion}/{resultType}/{iDNumber}");
+                var builder = new UriBuilder($"{scoreServiceURL}/{scoreAPI.Username}/{scoreAPI.Password}/{myOrigin}/{scoreApiVersion}/{resultType}/{scoreAPI.IdNumber}");
                 //var builder = new UriBuilder(scoreServiceURL);
                 builder.Port = 9443;
                 //var query = HttpUtility.ParseQueryString(builder.Query);
@@ -120,20 +125,23 @@ namespace CreditScore.Controllers
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(
                     new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
-                client.DefaultRequestHeaders.Add("User-Agent", ".NET Foundation Repository Reporter");
+                client.DefaultRequestHeaders.Add("User-Agent", ".NET Repository");
 
                 //var stringTask = client.GetStringAsync("/95268-1/devtest/QATEST/2.0/json/2903245665081");
                 var response = await client.GetStringAsync(url);
-                jsonResponse = JsonConvert.DeserializeObject<ScoreViewModel>(response);
-                var jsonReturnRes = JsonConvert.DeserializeObject<ReturnData>(jsonResponse.returnData); 
-                //response.EnsureSuccessStatusCode();
-                //string responseBody = await response.Content.ReadAsync<ScoreViewModel>();
+                if (response != null)
+                {
+                    scoreJsonViewModel = JsonConvert.DeserializeObject<ScoreJsonViewModel>(response);
+                    if (!scoreJsonViewModel.hasErrors)
+                        scoreDataViewModel = JsonConvert.DeserializeObject<ScoreDataViewModel>(scoreJsonViewModel.returnData);
+                }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
-            return jsonResponse;
+
+            return scoreDataViewModel;
         }
     }
 }
