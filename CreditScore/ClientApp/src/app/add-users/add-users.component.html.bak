@@ -1,19 +1,19 @@
 <h3>User Registration</h3>
 
-<form [formGroup]="userForm">
+<form [formGroup]="userForm" >
   <div class="form-group">
     <label for="firstName">First Name</label>
     <input type="text" formControlName="firstName" class="form-control" />
     <!--<div *ngIf="submitted && f.firstName.errors" class="invalid-feedback">-->
     <!--<div *ngIf="f.firstName.errors.required">First Name is required</div>
-    </div>-->
+  </div>-->
   </div>
   <div class="form-group">
     <label for="lastName">Sur Name</label>
     <input type="text" formControlName="surName" class="form-control" />
     <!--<div *ngIf="submitted && f.lastName.errors" class="invalid-feedback">-->
     <!--<div *ngIf="f.lastName.errors.required">Last Name is required</div>
-    </div>-->
+  </div>-->
   </div>
   <div class="form-group">
     <label for="username">Username</label>
@@ -26,24 +26,24 @@
     <label for="password">Password</label>
     <input type="password" formControlName="password" class="form-control" />
     <!--<div *ngIf="submitted && f.password.errors" class="invalid-feedback">
-    <div *ngIf="f.password.errors.required">Password is required</div>-->
+  <div *ngIf="f.password.errors.required">Password is required</div>-->
     <!-- <div *ngIf="f.password.errors.minlength">Password must be at least 6 characters</div>
-    </div>-->
+  </div>-->
   </div>
-
-
   <div class="form-group">
     <label for="company">Company</label>
-    <select formControlName="company" class="form-control" [(ngModel)]="selectedCompany">
-      <option value="0">Choose Company</option>
-      <option *ngFor="let company of companyDetails" [ngValue]="company.id">{{company.name}}</option>
-    </select>
+    <input type="text" formControlName="company" class="form-control" placeholder="Company" />
     <!--<div *ngIf="submitted && f.company.errors" class="invalid-feedback">
-      <!--<div *ngIf="f.company.errors.required">Company is required</div>
-    </div>-->
+    <!--<div *ngIf="f.company.errors.required">Company is required</div>
+  </div>-->
   </div>
 
-</form>
+
+
+
+
+
+  </form>
 
   <div class="form-group">
     <button [disabled]="loading" class="btn btn-primary" (click)="onSubmit()">
@@ -54,8 +54,17 @@
       <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
       Cancel
     </button>
+    <a routerLink="/login" class="btn btn-link">Cancel</a>
   </div>
 
+  <div>
+    <button class="btn btn-primary" (click)="incrementCounter()">Increment</button>
+    <div>count: {{currentCount}}</div>
+    </div>
+  
+  <p *ngFor="let num of arrayUser$ | async">
+    {{num.firstName}}
+  </p>
   <div>
     <!-- <p *ngIf="!userDetails"><em>Loading...</em></p>-->
 
@@ -69,7 +78,7 @@
           </thead>
 
           <tbody>
-            <tr *ngFor="let users of usersList">
+            <tr *ngFor="let users of arrayUser$ | async">
               <td>{{ users.firstName }}</td>
               <td>{{ users.surName }}</td>
               <td>{{ users.userName }}</td>

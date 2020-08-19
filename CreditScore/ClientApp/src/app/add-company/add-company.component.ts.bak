@@ -11,8 +11,7 @@ import { CompanyDetail } from '../_models/credit-model';
 })
 export class AddCompanyComponent implements OnInit {
   companyFormGroup: FormGroup
-  submitted: boolean;
-  companyDetails: CompanyDetail[];
+    submitted: boolean;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -31,25 +30,12 @@ export class AddCompanyComponent implements OnInit {
       balance: ['', [Validators.required]]
     });
 
-    this.getAllCompany();
   }
 
   onSubmit() {
     this.submitted = true;
     this.addCompany();
 
-  }
-
-  getAllCompany() {
-
-    this.companyService.getAllCompany()
-      .subscribe(
-        data => {
-          if (data) {
-            this.companyDetails = data;
-          }
-        }
-      );
   }
 
 
@@ -71,7 +57,6 @@ export class AddCompanyComponent implements OnInit {
         data => {
           //return data
           if (data) {
-            this.companyDetails.push(data);
             //this.userDetails.pipe(push(data);
             // this.userDetails = this.userDetails.slice();
             //this.userDetailSubject.next(data);

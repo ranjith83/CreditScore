@@ -9,9 +9,5 @@ namespace CreditScore.Interface
     public interface ICompanyService
     {
         Company AddCompany(CompanyViewModel companyViewModel);
-
-        List<Company> GetCompany();
-
-        dynamic GetCompanyForSelect();
     }
 }

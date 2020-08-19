@@ -37,25 +37,8 @@ namespace CreditScore.Business
 
         }
 
-        public List<Company> GetCompany()
-        {
-            var company = (from comp in _context.Company
-                           select comp)
-                            .ToList();
-                           
-            return company;
+        
 
-        }
-
-        public dynamic GetCompanyForSelect()
-        {
-            var company = (from comp in _context.Company
-                           select new { comp.Id,comp.Name})
-                           .ToList();
-
-            return company;
-        }
-
-
+       
     }
 }

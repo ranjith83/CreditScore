@@ -32,32 +32,18 @@ namespace CreditScore.Controllers
 
         }
 
-        [HttpGet]
-        [Route("GetAllCompany")]
-        public IActionResult GetCompany()
-        {
-            var response = _companyService.GetCompany();
+        //[HttpGet]
+        //[Route("GetUserByCompany/{companyID}")]
+        //public IActionResult Get(long companyID)
+        //{
+        //    var response = _userService.GetUsers(companyID);
 
-            if (response == null)
-                return BadRequest(new { message = "No Company found!!!" });
+        //    if (response == null)
+        //        return BadRequest(new { message = "No Users found!!!" });
 
-            return Ok(response);
+        //    return Ok(response);
 
-        }
-
-
-        [HttpGet]
-        [Route("GetCompanyForSelect")]
-        public IActionResult GetCompanyForSelect()
-        {
-            var response = _companyService.GetCompanyForSelect();
-
-            if (response == null)
-                return BadRequest(new { message = "No Company found!!!" });
-
-            return Ok(response);
-
-        }
+        //}
 
        
     }

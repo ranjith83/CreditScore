@@ -31,17 +31,4 @@ export class CompanyService {
     return this.http.post<any>(this.url + 'addcompany', companyDetail, options);
       
   }
-
-
-  getAllCompany(): Observable<CompanyDetail[]> {
-
-    return this.http.get<CompanyDetail[]>(this.url + 'getAllCompany');
-
-  }
-
-  getCompanyForSelect(): Observable<any> {
-
-    return this.http.get<any>(this.url + 'GetCompanyForSelect');
-
-  }
 }
