@@ -40,8 +40,6 @@ export class CompanyService {
   }
 
   getCompanyForSelect(): Observable<any> {
-
     return this.http.get<any>(this.url + 'GetCompanyForSelect');
-
   }
 }

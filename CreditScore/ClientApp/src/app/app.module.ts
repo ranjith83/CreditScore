@@ -2,8 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
-
+import { Observable } from "rxjs";
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -20,6 +19,9 @@ import { BulkUploadComponent } from './bulk-upload/bulk-upload.component';
 import { AddUsersComponent } from './add-users/add-users.component';
 import { AddCompanyComponent } from './add-company/add-company.component';
 import { AgGridModule } from "ag-grid-angular";
+import { GetCustomerScoreComponent } from './get-customer-score/get-customer-score.component';
+import { GetReportsComponent } from './get-reports/get-reports.component';
+import { Ng2SearchPipeModule } from 'ng2-search-filter';
 
 @NgModule({
   declarations: [
@@ -33,7 +35,9 @@ import { AgGridModule } from "ag-grid-angular";
     BulkUploadComponent,
     AddUsersComponent,
     AddCompanyComponent,
-
+    GetCustomerScoreComponent,
+    GetReportsComponent
+    
   ],
   imports: [
    // AccountModule,
@@ -42,6 +46,7 @@ import { AgGridModule } from "ag-grid-angular";
     FormsModule,
     ReactiveFormsModule,
     appRoutingModule,
+    Ng2SearchPipeModule,
    AgGridModule.withComponents([])
   ],  
   providers: [ConfigService],

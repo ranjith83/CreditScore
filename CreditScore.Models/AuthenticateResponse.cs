@@ -13,12 +13,15 @@ namespace CreditScore.Models
 
         public AuthenticateResponse(User user, string token)
         {
-            Id = user.Id;
-            CompanyId = user.CompanyId;
-            FirstName = user.FirstName;
-            SurName = user.SurName;
-            Username = user.UserName;
-            Token = token;
+            if (user != null)
+            {
+                Id = user.Id;
+                CompanyId = user.CompanyId;
+                FirstName = user.FirstName;
+                SurName = user.SurName;
+                Username = user.UserName;
+                Token = token;
+            }
         }
     }
 }

@@ -40,18 +40,22 @@ namespace CreditScore.Business
 
         public AuthenticateResponse Authenticate(AuthenticateRequest model)
         {
+            string token = "";
             var userResult = (from user in _context.User
                           where user.UserName == model.Username
                         select user).FirstOrDefault();
 
-            var isPasswordValid = VerifyPassword(userResult.PasswordHash, model.Password);
+            if (userResult != null)
+            {
 
-            // return null if user not found
-            if (userResult == null && isPasswordValid) return null;
+                var isPasswordValid = VerifyPassword(userResult.PasswordHash, model.Password);
 
-            // authentication successful so generate jwt token
-            var token = generateJwtToken(userResult);
+                // return null if user not found
+                if (userResult == null && isPasswordValid) return null;
 
+                // authentication successful so generate jwt token
+                token = generateJwtToken(userResult);
+            }
             return new AuthenticateResponse(userResult, token);
         }
 

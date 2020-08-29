@@ -1,2 +1,31 @@
 <h1>Hello {{ this.userName  }}!</h1>
 
+<div class="form-group">
+  <label for="score">Your Score</label>
+  <span for="score" class="form-control" >{{userScore}}</span>
+  </div>
+
+<div>
+   <p *ngIf="!customerDetails"><em>Loading...</em></p>
+  <table class='table table-striped' aria-labelledby="tableLabel" id="credit-table">
+    <thead>
+      <tr>
+        <th>First Name</th>
+        <th>Sur name</th>
+        <th>ID Number</th>
+        <th>Address</th>
+        <th>Cell</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let customer of customerDetails">
+        <td>{{ customer.firstName }}</td>
+        <td>{{ customer.surName }}</td>
+        <td>{{ customer.idNumber }}</td>
+        <td>{{ customer.address }}</td>
+        <td>{{ customer.cell }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

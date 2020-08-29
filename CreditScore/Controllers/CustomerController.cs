@@ -25,7 +25,8 @@ namespace CreditScore.Controllers
         private readonly ICustomerService _customerService;
         private readonly IConfiguration _configuration;
         private readonly string scoreServiceURL;
-        private readonly string iDNumber;
+        private readonly string userName;
+        private readonly string password;
         private readonly string myOrigin;
         private readonly string scoreApiVersion;
         private readonly string resultType;
@@ -39,6 +40,8 @@ namespace CreditScore.Controllers
             _configuration = configuration;
 
             scoreServiceURL = _configuration.GetValue<string>("AppSettings:ScoreServiceURL");
+            userName = _configuration.GetValue<string>("AppSettings:UserName");
+            password = _configuration.GetValue<string>("AppSettings:Password");
             resultType = _configuration.GetValue<string>("AppSettings:ResultType");
             myOrigin = _configuration.GetValue<string>("AppSettings:MyOrigin");
             scoreApiVersion = _configuration.GetValue<string>("AppSettings:ScoreAPIVersion");
@@ -84,20 +87,22 @@ namespace CreditScore.Controllers
 
         private static readonly HttpClient client = new HttpClient();
 
-        [HttpPost("InvokeScore")]
-        public async Task<IActionResult> InvokeScore(ScoreAPIRequest scoreAPIRequest )
+        [HttpPost("invokeCreditScore")]
+        public async Task<IActionResult>InvokeCreditScore(ScoreAPIRequest scoreAPIRequest)
         {
 
             List<CreditInquiresViewModel> creditInquiresViewModels = null;
             ScoreDataViewModel scoreDataView = null;
 
-            var userCompany = _customerService.IsCompanyBalanceAvailable(scoreAPIRequest.Username, scoreAPIRequest.Password);
+            var userCompany = _customerService.IsCompanyBalanceAvailable(scoreAPIRequest.Username);
 
-            if (userCompany != null)
-                scoreDataView = await InvokeScoreAPI(scoreAPIRequest);
+            if (userCompany == null)
+                return BadRequest(new { message = "No Balance available!!" });
 
-            if (_customerService.UpdateCompanyBalance(scoreAPIRequest.Username))
-                creditInquiresViewModels = _customerService.AddCustomerInquiry(scoreDataView, userCompany.Item1, userCompany.Item2, scoreAPIRequest.BatchId);
+            scoreDataView = await InvokeScoreAPI(scoreAPIRequest);
+
+            if (scoreDataView != null && _customerService.UpdateCompanyBalance(scoreAPIRequest.Username))
+                creditInquiresViewModels = _customerService.AddCustomerInquiry(scoreDataView, userCompany.Item1, userCompany.Item2, 12012);
 
             return Ok(creditInquiresViewModels);
         }
@@ -108,7 +113,7 @@ namespace CreditScore.Controllers
             ScoreJsonViewModel scoreJsonViewModel = null;
             try
             {
-                var builder = new UriBuilder($"{scoreServiceURL}/{scoreAPI.Username}/{scoreAPI.Password}/{myOrigin}/{scoreApiVersion}/{resultType}/{scoreAPI.IdNumber}");
+                var builder = new UriBuilder($"{scoreServiceURL}/{userName}/{password}/{myOrigin}/{scoreApiVersion}/{resultType}/{scoreAPI.IdNumber}");
                 //var builder = new UriBuilder(scoreServiceURL);
                 builder.Port = 9443;
                 //var query = HttpUtility.ParseQueryString(builder.Query);
@@ -142,6 +147,70 @@ namespace CreditScore.Controllers
             }
 
             return scoreDataViewModel;
+        }
+
+        [HttpGet]
+        [Route("GetUserScore/{userId}")]
+        public IActionResult GetUserScore(long userId)
+        {
+
+            var response = _customerService.GetUserScore(userId);
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("GetUserCredits/{userId}")]
+        public IActionResult GetUserCredits(long userId)
+        {
+            if (userId <= 0)
+                return BadRequest(new { message = "User Id is null" });
+
+            var response = _customerService.GetUserCredits(userId);
+
+            if(response == null)
+                return BadRequest(new { message = "No records found" });
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("GetAllCustomer/")]
+        public IActionResult GetAllCustomer()
+        {
+            var response = _customerService.GetAllCustomer();
+
+            if (response == null)
+                return BadRequest(new { message = "No records found" });
+
+            return Ok(response);
+        }
+
+
+        [HttpPost("AddCustomer")]
+        public IActionResult AddUser(CustomerViewModel customerViewModel)
+        {
+            var response = _customerService.AddCustomer(customerViewModel);
+
+            if (!response)
+                return BadRequest(new { message = "Customer failed to add" });
+
+            return Ok(response);
+
+        }
+
+        [HttpGet]
+        [Route("GetUserReports/{userId}")]
+        public IActionResult GetUserReports(long userId)
+        {
+            if (userId <= 0)
+                return BadRequest(new { message = "User Id is null" });
+
+            var response = _customerService.GetUserReport(userId);
+
+            if (response == null)
+                return BadRequest(new { message = "No records found" });
+
+            return Ok(response);
         }
     }
 }

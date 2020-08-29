@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 using AutoMapper;
+using CsvHelper.Configuration;
 
 namespace CreditScore.Business
 {
@@ -50,7 +51,14 @@ namespace CreditScore.Business
             List<Customer> customers = new List<Customer>();
             using (var reader = new StreamReader(filePath))
             {
-                var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
+                CsvConfiguration configuration = new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true,HeaderValidated = null };
+
+                var csvReader = new CsvReader(reader, configuration); // CultureInfo.InvariantCulture);
+                // csvReader.Configuration.PrepareHeaderForMatch = (header, index) => header.ToLower();
+                //csvReader.Configuration.HeaderValidated = null; // (header, index) => header.ToLower();
+                csvReader.Configuration.RegisterClassMap<CustomerCSVMap>();
+                csvReader.Configuration.HeaderValidated = null;
+                csvReader.Configuration.MissingFieldFound = null;
                 customerViewModel = csvReader.GetRecords<CustomerViewModel>();
 
                 foreach (var customerModel in customerViewModel)
@@ -75,7 +83,7 @@ namespace CreditScore.Business
         }
 
 
-        public Tuple<long, long> IsCompanyBalanceAvailable(string username, string password)
+        public Tuple<long, long> IsCompanyBalanceAvailable(string username)
         {
             Tuple<long, long> returnVal = null;
 
@@ -85,9 +93,10 @@ namespace CreditScore.Business
                                select new { company.Balance, companyId = company.Id, UserId = user.Id, user.PasswordHash }).FirstOrDefault();
 
             if (userCompany != null && userCompany.PasswordHash != String.Empty)
-                if (_userService.VerifyPassword(userCompany.PasswordHash, password))
-                    if (userCompany.Balance >= 1)
-                        returnVal = Tuple.Create(userCompany.companyId, userCompany.UserId);
+                if (userCompany.Balance >= 1)
+                    returnVal = Tuple.Create(userCompany.companyId, userCompany.UserId);
+            //   if (_userService.VerifyPassword(userCompany.PasswordHash, password))
+
 
             return returnVal;
         }
@@ -151,5 +160,69 @@ namespace CreditScore.Business
 
             return creditInquiresViewModels;
         }
+
+        public long GetUserScore(long userID)
+        {
+            long score = 0;
+            if (userID > 0)
+            {
+                score = (from inq in _context.CreditInquires
+                             where inq.UserID == userID
+                             orderby inq.CreatedDate descending
+                             select inq.Score).FirstOrDefault();
+
+            }
+            return score;
+        }
+        public List<CreditInquiresViewModel> GetUserCredits(long userID)
+        {
+            List<CreditInquiresViewModel> creditInquires = null;
+            if (userID > 0)
+            {
+              var  creditInq = (from inq in _context.CreditInquires
+                         where inq.UserID == userID
+                         select inq).ToList();
+
+                creditInquires = _mapper.Map<List<CreditInquiresViewModel>>(creditInq);
+
+            }
+            return creditInquires;
+        }
+
+        public List<CustomerViewModel> GetAllCustomer()
+        {
+            List<CustomerViewModel> customerVM = null;
+            var customer = (from cust in _context.Customer
+                            select cust).ToList();
+
+            customerVM = _mapper.Map<List<CustomerViewModel>>(customer);
+
+            return customerVM;
+        }
+
+        public bool AddCustomer(CustomerViewModel customerViewModel)
+        {
+           var customer = _mapper.Map<Customer>(customerViewModel);
+
+            _context.Customer.Add(customer);
+            var custInsert = _context.SaveChanges();
+            return custInsert > 0;
+        }
+
+        public List<CreditInquiresViewModel> GetUserReport(long userID)
+        {
+            List<CreditInquiresViewModel> creditInquires = null;
+            if (userID > 0)
+            {
+                var creditInq = (from inq in _context.CreditInquires
+                                 where inq.UserID == userID
+                                 select inq).ToList();
+
+                creditInquires = _mapper.Map<List<CreditInquiresViewModel>>(creditInq);
+
+            }
+            return creditInquires;
+        }
+
     }
 }

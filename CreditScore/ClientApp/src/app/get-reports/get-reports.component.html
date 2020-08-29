@@ -1,0 +1,48 @@
+
+
+    <input class="form-control" type="text" name="search" [(ngModel)]="searchText" autocomplete="off" placeholder="&#61442;  Start searching for a hero by id or name or country">
+    <div class="overflow-auto">
+      <!-- <p *ngIf="!userDetails"><em>Loading...</em></p>-->
+      <a style="cursor: pointer" (click)="exportexcel()">
+        <article> Download as Excel <span class="glyphicon glyphicon-file"></span></article>
+      </a>
+      <table class='table table-striped' aria-labelledby="tableLabel" id="credit-table">
+        <thead>
+          <tr style="height:initial">
+            <th>Batch ID</th>
+            <th>Score</th>
+            <th>Success</th>
+            <th>Reason 1</th>
+            <th>Description 1</th>
+            <th>Reason 2</th>
+            <th>Description 2</th>
+            <th>Reason 3</th>
+            <th>Description 3</th>
+            <th>Reason 4</th>
+            <th>Description 4</th>
+            <th>Reason 5</th>
+            <th>Description 5</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let data of reportData">
+            <td>{{ data.batchID }}</td>
+            <td>{{ data.score }}</td>
+            <td>{{ data.success }}</td>
+            <td>{{ data.reasonCode1 }}</td>
+            <td>{{ data.description1 }}</td>
+            <td>{{ data.reasonCode2 }}</td>
+            <td>{{ data.description2 }}</td>
+            <td>{{ data.reasonCode3 }}</td>
+            <td>{{ data.description3 }}</td>
+            <td>{{ data.reasonCode4 }}</td>
+            <td>{{ data.description4 }}</td>
+            <td>{{ data.reasonCode5 }}</td>
+            <td>{{ data.description5 }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  

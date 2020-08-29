@@ -29,7 +29,7 @@ export class CustomerDetailComponent implements OnInit {
       idNumber: ['', [Validators.required, Validators.minLength(6)]]
     });
     this.userDetails = this.authenticationService.currentUserValue;
-    
+    this.getCredits();
   }
 
   // convenience getter for easy access to form fields
@@ -41,10 +41,20 @@ export class CustomerDetailComponent implements OnInit {
   }
 
   getScore() {
-    this.customerService.invokeScore(this.f.userName.value, this.f.password.value, this.f.batchID.value, this.f.idNumber.value).subscribe(
+    this.customerService.invokeCreditScore(this.f.userName.value, this.f.idNumber.value).subscribe(
       data => {
         this.creditInquiries = data;
         this.creditInquiries.idNumber = this.f.idNumber.value;
+        return data;
+      });
+  }
+
+  getCredits() {
+    var userVal = this.authenticationService.currentUserValue;
+    if (userVal != null && userVal.id != null)
+      this.customerService.getUserCredits(userVal.id).subscribe(
+      data => {
+        this.creditInquiries = data;
         return data;
       });
   }

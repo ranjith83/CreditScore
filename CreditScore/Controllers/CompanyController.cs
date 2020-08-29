@@ -5,6 +5,7 @@ using System.Linq;
 using CreditScore.Models;
 using CreditScore.Interface;
 using CreditScore.Models.ViewModel;
+using Microsoft.Extensions.Logging;
 
 namespace CreditScore.Controllers
 {
@@ -13,10 +14,11 @@ namespace CreditScore.Controllers
     public class CompanyController : ControllerBase
     {
         private ICompanyService _companyService;
-
-        public CompanyController(ICompanyService companyService)
+        private ILogger<CompanyController> _logger;
+        public CompanyController(ICompanyService companyService, ILogger<CompanyController> logger)
         {
             _companyService = companyService;
+            _logger = logger;
         }
 
 
@@ -36,13 +38,21 @@ namespace CreditScore.Controllers
         [Route("GetAllCompany")]
         public IActionResult GetCompany()
         {
-            var response = _companyService.GetCompany();
+            try
+            {
+                _logger.LogInformation("Get Company detail starts");
+                var response = _companyService.GetCompany();
 
-            if (response == null)
+                if (response == null)
+                    return BadRequest(new { message = "No Company found!!!" });
+
+                return Ok(response);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.ToString());
                 return BadRequest(new { message = "No Company found!!!" });
-
-            return Ok(response);
-
+            }
         }
 
 
@@ -61,4 +71,5 @@ namespace CreditScore.Controllers
 
        
     }
+
 }

@@ -1,0 +1,48 @@
+<h3>Inquiry</h3>
+
+<form [formGroup]="getCustomerScoreForm">
+  <div class="form-group">
+
+    <div class="form-group">
+      <label for="idNumber">ID Number</label>
+      <input type="text" formControlName="idNumber" class="form-control" value="2903245665081" />
+      <!--<div *ngIf="submitted && f.lastName.errors" class="invalid-feedback">-->
+      <!--<div *ngIf="f.lastName.errors.required">Last Name is required</div>
+      </div>-->
+    </div>
+    <button [disabled]="loading" class="btn btn-primary" (click)="onSubmit()">
+      <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+      Add
+    </button>
+
+  </div>
+</form>
+
+<div>
+  <!-- <p *ngIf="!userDetails"><em>Loading...</em></p>-->
+  <a style="cursor: pointer" (click)="exportexcel()">
+    <article> Download as Excel <span class="glyphicon glyphicon-file"></span></article>
+  </a>
+  <table class='table table-striped' aria-labelledby="tableLabel" id="credit-table">
+    <thead>
+      <tr>
+        <th>User Name</th>
+        <th>First Name</th>
+        <th>Sur name</th>
+        <th>ID Number</th>
+        <th>Score</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let credits of creditInquiries">
+        <td>{{ userDetails.username }}</td>
+        <td>{{ userDetails.firstName }}</td>
+        <td>{{ userDetails.surName }}</td>
+        <td>{{ credits.idNumber }}</td>
+        <td>{{ credits.score }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+

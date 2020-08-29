@@ -11,12 +11,6 @@ namespace CreditScore.Models.ViewModel
             public string Username { get; set; }
 
             [Required]
-            public string Password { get; set; }
-
-            [Required]
-            public long BatchId { get; set; }
-
-            [Required]
             public string IdNumber { get; set; }
 
     }

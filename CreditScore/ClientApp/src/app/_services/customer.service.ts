@@ -22,12 +22,44 @@ export class CustomerService {
   }
 
 
-  invokeScore(username: string, password: string, batchId: string, idNumber: string) {
-    return this.http.post<any>(this.url + 'InvokeScore', { username, password, batchId, idNumber });
+  invokeCreditScore(userName:string, idNumber: string) {
+    return this.http.post<any>(this.url + 'invokeCreditScore', { userName, idNumber });
     //.pipe(map(user => {
     //  // store user details and jwt token in local storage to keep user logged in between page refreshes
     //  localStorage.setItem('currentUser', JSON.stringify(user));
     //  return user;
     //}));
   }
+
+  getUserScore(userId: number) {
+    return this.http.get<any>(this.url + "GetUserScore/" + userId)
+      .pipe(map(score => {
+        return score;
+      }));
+  }
+
+  getUserCredits(userId: number) {
+    return this.http.get<any>(this.url + "getUserCredits/" + userId)
+      .pipe(map(credits => {
+        return credits;
+      }));
+  }
+
+
+  getAllCustomer() {
+    return this.http.get<any>(this.url + "getAllCustomer");
+  }
+
+  addCustomer(customerDetail: any): Observable<any> {
+    return this.http.post<any>(this.url + 'AddCustomer', customerDetail);
+  }
+  
+
+  getUserReports(userId: number) {
+    return this.http.get<any>(this.url + "getUserReports/" + userId)
+      .pipe(map(credits => {
+        return credits;
+      }));
+  }
+
 }

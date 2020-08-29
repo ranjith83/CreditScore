@@ -14,6 +14,12 @@ namespace CreditScore.Mappings
         public MappingProfile()
         {
             CreateMap<CreditInquiresViewModel, CreditInquires>();
+
+            CreateMap<CreditInquires ,CreditInquiresViewModel>();
+
+            CreateMap<Customer, CustomerViewModel>();
+
+            CreateMap<CustomerViewModel, Customer>();
         }
             //CreateMap<UsersViewModel, Users>()
             //    .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))

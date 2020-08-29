@@ -60,13 +60,14 @@ export class AddUsersComponent implements OnInit {
 
     //private alertService: AlertService
   ) {
-    // redirect to home if already logged in
+     //redirect to home if already logged in
     //if (this.authenticationService.currentUserValue) {
     //  this.router.navigate(['/']);
     //}
-
-    this.companyID = this.authenticationService.currentUserValue.companyId;
-    this.userID = this.authenticationService.currentUserValue.id;
+    if (this.authenticationService != null && this.authenticationService.currentUserValue != null) {
+      this.companyID = this.authenticationService.currentUserValue.companyId;
+      this.userID = this.authenticationService.currentUserValue.id;
+    }
     //this.userDetailSubject$ = new BehaviorSubject<UserDetail>(this.addUser);
    // this.addUser = this.addUser.asObservable();
 
