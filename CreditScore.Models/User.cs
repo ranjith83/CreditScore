@@ -21,6 +21,8 @@ namespace CreditScore.Models
         public string SurName { get; set; }
         public string UserName { get; set; }
         public string PasswordHash { get; set; }
+
+        public string Role { get; set; }
         public bool Active { get; set; }
         public DateTime? CreatedDate { get; set; }
         public long? Createdby { get; set; }

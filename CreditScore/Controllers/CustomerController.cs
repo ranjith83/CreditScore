@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
+//using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Web;
 using CreditScore.Interface;
@@ -56,7 +56,8 @@ namespace CreditScore.Controllers
                 var file = Request.Form.Files[0];
                 var folderName = Path.Combine("Resources", "CustomerCSV");
                 var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
-
+                var compId = (string)Request.Form["companyId"];
+                var companyId = (!String.IsNullOrEmpty(compId)) ? Convert.ToInt64(compId) : 0;
                 if (file.Length > 0)
                 {
                     var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
@@ -70,7 +71,7 @@ namespace CreditScore.Controllers
                         file.CopyTo(stream);
                     }
 
-                    var response =_customerService.ReadAndInsertCustomer(fullPath);
+                    var response =_customerService.ReadAndInsertCustomer(fullPath, companyId);
 
                     return Ok(response);
                 }
@@ -94,12 +95,21 @@ namespace CreditScore.Controllers
             List<CreditInquiresViewModel> creditInquiresViewModels = null;
             ScoreDataViewModel scoreDataView = null;
 
+            if(String.IsNullOrEmpty(scoreAPIRequest.IdNumber))
+                return BadRequest(new { message = "Please enter ID Number" });
+
+            if (_customerService.GetCustomer(scoreAPIRequest.IdNumber) == null)
+                return BadRequest(new { message = "No Customer exists for the IDNumber" });
+
             var userCompany = _customerService.IsCompanyBalanceAvailable(scoreAPIRequest.Username);
 
             if (userCompany == null)
                 return BadRequest(new { message = "No Balance available!!" });
 
             scoreDataView = await InvokeScoreAPI(scoreAPIRequest);
+            
+            if(scoreJsonViewModel != null && scoreJsonViewModel.hasErrors)
+                return BadRequest(new { message = scoreJsonViewModel.errorDescription });
 
             if (scoreDataView != null && _customerService.UpdateCompanyBalance(scoreAPIRequest.Username))
                 creditInquiresViewModels = _customerService.AddCustomerInquiry(scoreDataView, userCompany.Item1, userCompany.Item2, 12012);
@@ -107,10 +117,11 @@ namespace CreditScore.Controllers
             return Ok(creditInquiresViewModels);
         }
 
+        ScoreJsonViewModel scoreJsonViewModel = null;
         private async Task<ScoreDataViewModel> InvokeScoreAPI(ScoreAPIRequest scoreAPI)
         {
             ScoreDataViewModel scoreDataViewModel = null;
-            ScoreJsonViewModel scoreJsonViewModel = null;
+          
             try
             {
                 var builder = new UriBuilder($"{scoreServiceURL}/{userName}/{password}/{myOrigin}/{scoreApiVersion}/{resultType}/{scoreAPI.IdNumber}");

@@ -20,7 +20,7 @@ export class CompanyService {
 
   }
 
-  addCompany(companyDetail: CompanyDetail): Observable<CompanyDetail> {
+  addUpdateCompany(companyDetail: CompanyDetail): Observable<CompanyDetail> {
 
     const header = new HttpHeaders({ 'Content-Type': 'application/json' });
     //const pass = 'Basic ' + btoa(cuid + ': ');
@@ -28,7 +28,7 @@ export class CompanyService {
     const options = ({
       headers: header
     });
-    return this.http.post<any>(this.url + 'addcompany', companyDetail, options);
+    return this.http.post<any>(this.url + 'addupdatecompany', companyDetail, options);
       
   }
 

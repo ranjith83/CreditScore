@@ -23,11 +23,12 @@ namespace CreditScore.Models.ViewModel
 		public string ReasonCode5 { get; set; }
 		public string Description5 { get; set; }
 
+		public string IDNumber { get; set; }
 		public DateTime CreatedDate { get; set; }
 		public long CreatedBy { get; set; }
 		public DateTime ModifiedDate { get; set; }
 		public long ModifiedBy { get; set; }
 
-		
+		public virtual CustomerViewModel Customer { get; set; }
 	}
 }

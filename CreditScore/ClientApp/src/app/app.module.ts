@@ -18,7 +18,7 @@ import { CustomerDetailComponent } from './customer-detail/customer-detail.compo
 import { BulkUploadComponent } from './bulk-upload/bulk-upload.component';
 import { AddUsersComponent } from './add-users/add-users.component';
 import { AddCompanyComponent } from './add-company/add-company.component';
-import { AgGridModule } from "ag-grid-angular";
+//import { AgGridModule } from "ag-grid-angular";
 import { GetCustomerScoreComponent } from './get-customer-score/get-customer-score.component';
 import { GetReportsComponent } from './get-reports/get-reports.component';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
@@ -47,7 +47,7 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
     ReactiveFormsModule,
     appRoutingModule,
     Ng2SearchPipeModule,
-   AgGridModule.withComponents([])
+  // AgGridModule.withComponents([])
   ],  
   providers: [ConfigService],
   //providers: []ConfigService, {

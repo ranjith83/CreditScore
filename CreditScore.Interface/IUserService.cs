@@ -13,9 +13,9 @@ namespace CreditScore.Interface
 
         User GetById(int id);
 
-        User AddUsers(UserDetail userDetail);
+        User AddUpdateUser(UserViewModel userDetail);
 
-        List<User> GetUsers(long companyID);
+        List<UserViewModel> GetUsers(long companyID);
 
         bool VerifyPassword(string hashedPasswordWithSalt, string passwordToCheck);
     }

@@ -18,23 +18,29 @@ namespace CreditScore.Business
         }
 
        
-        public Company AddCompany(CompanyViewModel companyViewModel)
+        public Company AddUpdateCompany(CompanyViewModel companyViewModel)
         {
             if (companyViewModel == null)
                 return null;
 
-            Company company = new Company();
+            var company = _context.Company.SingleOrDefault(s => s.Id == companyViewModel.Id);
+            
+            if (company == null)
+                company = new Company();
+
+            company.Id = companyViewModel.Id;
             company.Name = companyViewModel.Name;
             company.Telephone = companyViewModel.Telephone;
             company.Address = companyViewModel.Address;
             company.Balance = companyViewModel.Balance;
             company.CreatedBy = 1;
 
-            _context.Company.Add(company);
+            if (company.Id <= 0)
+                _context.Company.Add(company);
+           
             _context.SaveChanges();
 
             return company;
-
         }
 
         public List<Company> GetCompany()

@@ -10,6 +10,7 @@
         <thead>
           <tr style="height:initial">
             <th>Batch ID</th>
+            <th>ID Number</th>
             <th>Score</th>
             <th>Success</th>
             <th>Reason 1</th>
@@ -26,8 +27,9 @@
         </thead>
 
         <tbody>
-          <tr *ngFor="let data of reportData">
+          <tr *ngFor="let data of reportData | filter:searchText">
             <td>{{ data.batchID }}</td>
+            <td>{{ data.customer.idNumber }}</td>
             <td>{{ data.score }}</td>
             <td>{{ data.success }}</td>
             <td>{{ data.reasonCode1 }}</td>

@@ -9,10 +9,17 @@ import { Router } from '@angular/router';
 })
 export class NavMenuComponent {
   isExpanded = false;
+  isAdmin: boolean = true;
+  isLogged: boolean;
 
   constructor(private authenticationService: AuthenticationService,
                private router: Router) {
 
+  }
+
+  ngOnInit() {
+    this.isAdmin = this.authenticationService.isAdmin;
+    this.isLogged = this.authenticationService.isLoggedIn;
   }
 
   collapse() {
@@ -29,7 +36,7 @@ export class NavMenuComponent {
 
     // redirect to home if already logged in
     if (this.authenticationService.currentUserValue) {
-      this.router.navigate(['/']);
+      this.router.navigate(['/login']);
     }
   }
 }

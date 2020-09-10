@@ -30,12 +30,12 @@ namespace CreditScore.Business
             _mapper = mapper;
         }
 
-        public List<Customer> ReadAndInsertCustomer(string filePath)
+        public List<Customer> ReadAndInsertCustomer(string filePath, long customerId)
         {
             try
             {
 
-                return ReadCSV(filePath);
+                return ReadCSV(filePath, customerId);
             }
             catch (Exception ex)
             {
@@ -43,7 +43,7 @@ namespace CreditScore.Business
             }
         }
 
-        private List<Customer> ReadCSV(string filePath)
+        private List<Customer> ReadCSV(string filePath, long companyId)
         {
 
 
@@ -68,7 +68,8 @@ namespace CreditScore.Business
                     customer.SurName = customerModel.SurName;
                     customer.Cell = Convert.ToInt64(customerModel.Cell);
                     customer.IDNumber = customerModel.IdNumber;
-                    //customer.CreatedDate = DateTime.Now;
+                    customer.CompanyId = companyId;
+                    customer.CreatedDate = DateTime.Now;
                     //customer.CreatedBy = 1;
 
                     customers.Add(customer);
@@ -200,6 +201,18 @@ namespace CreditScore.Business
             return customerVM;
         }
 
+        public CustomerViewModel GetCustomer(string idNumber)
+        {
+            CustomerViewModel customerVM = null;
+            var customer = (from cust in _context.Customer
+                            where cust.IDNumber == idNumber
+                            select cust).SingleOrDefault();
+
+            customerVM = _mapper.Map<CustomerViewModel>(customer);
+
+            return customerVM;
+        }
+
         public bool AddCustomer(CustomerViewModel customerViewModel)
         {
            var customer = _mapper.Map<Customer>(customerViewModel);
@@ -214,9 +227,25 @@ namespace CreditScore.Business
             List<CreditInquiresViewModel> creditInquires = null;
             if (userID > 0)
             {
-                var creditInq = (from inq in _context.CreditInquires
+                List<CreditInquires> creditInq = (from inq in _context.CreditInquires
+                                 join cust in  _context.Customer  on inq.CustomerID equals cust.Id
                                  where inq.UserID == userID
-                                 select inq).ToList();
+                                 select new CreditInquires { 
+                                     Customer = cust,
+                                     BatchID = inq.BatchID,
+                                     Description1 = inq.Description1,
+                                     Description2 = inq.Description2,
+                                     Description3 = inq.Description3,
+                                     Description4 = inq.Description4,
+                                     Description5 = inq.Description5,
+                                     Score = inq.Score,
+                                     Success = inq.Success,
+                                     ReasonCode1 = inq.ReasonCode1,
+                                     ReasonCode2 = inq.ReasonCode2,
+                                     ReasonCode3 = inq.ReasonCode3,
+                                     ReasonCode4 = inq.ReasonCode4,
+                                     ReasonCode5 = inq.ReasonCode5
+                                 }).ToList();
 
                 creditInquires = _mapper.Map<List<CreditInquiresViewModel>>(creditInq);
 

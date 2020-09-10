@@ -8,7 +8,7 @@ namespace CreditScore.Interface
 {
    public interface ICustomerService
     {
-        List<Customer> ReadAndInsertCustomer(string filePath);
+        List<Customer> ReadAndInsertCustomer(string filePath, long customerId);
 
         Tuple<long, long> IsCompanyBalanceAvailable(string username);
 
@@ -24,5 +24,7 @@ namespace CreditScore.Interface
         bool AddCustomer(CustomerViewModel customerViewModel);
 
         List<CreditInquiresViewModel> GetUserReport(long userID);
+
+        CustomerViewModel GetCustomer(string idNumber);
     }
 }

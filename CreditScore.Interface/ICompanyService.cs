@@ -8,7 +8,7 @@ namespace CreditScore.Interface
 {
     public interface ICompanyService
     {
-        Company AddCompany(CompanyViewModel companyViewModel);
+        Company AddUpdateCompany(CompanyViewModel companyViewModel);
 
         List<Company> GetCompany();
 

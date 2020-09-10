@@ -1,7 +1,7 @@
 <header>
   <nav
     class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3"
-  >
+   *ngIf="isLogged">
     <div class="container">
       <a class="navbar-brand" [routerLink]="['/']">Credit Score</a>
       <button
@@ -34,10 +34,10 @@
           <li class="nav-item" [routerLinkActive]="['link-active']">
             <a class="nav-link text-dark" [routerLink]="['/get-reports']">Reports</a>
           </li>
-          <li class="nav-item" [routerLinkActive]="['link-active']">
+          <li class="nav-item" [routerLinkActive]="['link-active']" *ngIf="isAdmin">
             <a class="nav-link text-dark" [routerLink]="['/add-users']">Add Users</a>
           </li>
-          <li class="nav-item" [routerLinkActive]="['link-active']">
+          <li class="nav-item" [routerLinkActive]="['link-active']" *ngIf="isAdmin">
             <a class="nav-link text-dark" [routerLink]="['/add-company']">Add Company</a>
           </li>
           <li class="nav-item" [routerLinkActive]="['link-active']">

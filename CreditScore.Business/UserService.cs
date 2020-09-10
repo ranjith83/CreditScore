@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using CreditScore.Helpers;
 using System.Security.Claims;
+using AutoMapper;
 
 namespace CreditScore.Business
 {
@@ -18,11 +19,13 @@ namespace CreditScore.Business
     {
         private readonly DatabaseContext _context;
         private readonly AppSettings _appSettings;
+        private readonly IMapper _mapper;
 
-        public UserService(DatabaseContext context, IOptions<AppSettings> appSettings)
+        public UserService(DatabaseContext context, IOptions<AppSettings> appSettings, IMapper mapper)
         {
             _context = context;
             _appSettings = appSettings.Value;
+            _mapper = mapper;
         }
 
         public bool AuthenticateUsers(string username, string password)
@@ -42,47 +45,57 @@ namespace CreditScore.Business
         {
             string token = "";
             var userResult = (from user in _context.User
-                          where user.UserName == model.Username
-                        select user).FirstOrDefault();
+                              where user.UserName == model.Username
+                              select user).FirstOrDefault();
 
-            if (userResult != null)
-            {
+            if (userResult == null)
+                return null;
 
-                var isPasswordValid = VerifyPassword(userResult.PasswordHash, model.Password);
+            var isPasswordValid = VerifyPassword(userResult.PasswordHash, model.Password);
 
-                // return null if user not found
-                if (userResult == null && isPasswordValid) return null;
+            // return null if user not found
+            if (!isPasswordValid) return null;
 
-                // authentication successful so generate jwt token
-                token = generateJwtToken(userResult);
-            }
+            // authentication successful so generate jwt token
+            token = generateJwtToken(userResult);
+
             return new AuthenticateResponse(userResult, token);
         }
 
 
-        public User AddUsers(UserDetail userDetail)
+        public User AddUpdateUser(UserViewModel userDetail)
         {
-            if (userDetail == null) // || userDetail.Id >= 0)
+            if (userDetail == null)
                 return null;
 
-            User user = new User();
+            var user = _context.User.SingleOrDefault(s => s.Id == userDetail.Id);
+
+            if (user == null)
+            {
+                user = new User();
+                user.PasswordHash = HashPassword(userDetail.Password);
+            }
             user.FirstName = userDetail.FirstName;
             user.SurName = userDetail.SurName;
             user.UserName = userDetail.UserName;
-            user.PasswordHash = HashPassword(userDetail.Password);
             user.CreatedDate = DateTime.Now;
             user.Createdby = userDetail.UserId;
             user.Modifiedby = userDetail.UserId;
             user.CompanyId = userDetail.CompanyId;
+            user.Active = true;
+            user.Role = "USER";//userDetail.Role;
+            user.Id = userDetail.Id;
 
-            _context.User.Add(user);
+            if (userDetail.Id <= 0)
+                _context.User.Add(user);
+
             _context.SaveChanges();
 
             return user;
 
         }
 
-        public List<User> GetUsers(long companyID)
+        public List<UserViewModel> GetUsers(long companyID)
         {
             if (companyID <= 0)
                 return null;
@@ -92,9 +105,14 @@ namespace CreditScore.Business
             //            on tUser.CompanyId equals tCompany.Id
             //            select new { tUser };
 
-            return _context.User
-                .Where(a => a.CompanyId == companyID)
+            var users = _context.User
+                //.Where(a => a.CompanyId == companyID)
                 .ToList();
+
+            return _mapper.Map<List<UserViewModel>>(users);
+
+
+
         }
 
 

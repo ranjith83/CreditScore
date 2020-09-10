@@ -2,8 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CreditScore.Models;
+
 using CreditScore.Interface;
+using CreditScore.Models;
 
 namespace CreditScore.Controllers
 {
@@ -37,10 +38,10 @@ namespace CreditScore.Controllers
         //    return Ok(users);
         //}
 
-        [HttpPost("AddUser")]
-        public IActionResult AddUser(UserDetail userDetail)
+        [HttpPost("AddUpdateUser")]
+        public IActionResult AddUser(UserViewModel userDetail)
         {
-            var response = _userService.AddUsers(userDetail);
+            var response = _userService.AddUpdateUser(userDetail);
 
             if (response == null)
                 return BadRequest(new { message = "Username added successfully" });

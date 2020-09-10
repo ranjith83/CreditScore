@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { first, map, take } from 'rxjs/operators';
 import { AuthenticationService, UserService } from '../_services';
-import { GridOptions } from 'ag-grid-community';
+// import { GridOptions } from 'ag-grid-community';
 
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { UserDetail } from '../_models/credit-model';
@@ -20,7 +20,7 @@ export class AddUsersComponent implements OnInit {
   userForm: FormGroup;
   loading = false;
   submitted = false;
-  private gridOptions: GridOptions;
+ // private gridOptions: GridOptions;
   public rowData:any[];
   private columnDefs: any[];
   public userDetails: UserDetail[];
@@ -40,8 +40,10 @@ export class AddUsersComponent implements OnInit {
   arrayUser$: Observable<any> = this.subjectUser.asObservable();
   companyDetails: any;
   selectedCompany = 0;
+  isEdited: boolean = true;
  //addUser: UserDetail;
   //currentData = this.userDetailSubject.asObservable();
+  isPasswordReadonly: boolean = false;
 
   public incrementCounter() {
     this.currentCount++;
@@ -83,7 +85,8 @@ export class AddUsersComponent implements OnInit {
       surName: ['', Validators.required],
       userName: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      company: ['', [Validators.required]]
+      company: ['', [Validators.required]],
+      id: new FormControl(false) //['', [Validators.required]]
     });
 
     
@@ -162,7 +165,7 @@ addElementToObservableArray(item) {
       SurName: this.f.surName.value,
       UserName: this.f.userName.value,
       Password: this.f.password.value,
-      Id: 0,
+      Id: this.f.id.value,
       UserId: this.userID
 
     }
@@ -178,6 +181,8 @@ addElementToObservableArray(item) {
            // this.userDetails = this.userDetails.slice();
             //this.userDetailSubject.next(data);
             //this.changeDectector(data);
+            this.loadCompany();
+            this.resetFields();
           }
         },
         err => console.error(err),
@@ -187,6 +192,29 @@ addElementToObservableArray(item) {
       //    this.loading = false;
       //}
     );
+  }
+
+  onSelectedRow(user: any) {
+      if (user != null) {
+      this.isEdited = true;
+      let formControls = this.userForm;
+      formControls.setValue({
+        firstName: user.firstName,
+        surName: user.surName,
+        userName: user.userName,
+        password: user.passwordHash,
+        company: user.companyId,
+        id: user.id
+      });
+
+      this.isPasswordReadonly = true;
+      //formControls.controls["password"].disabled = true;
+    }
+  }
+
+  resetFields() {
+    this.isPasswordReadonly = false;
+    this.userForm.reset();
   }
 
 }

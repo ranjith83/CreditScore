@@ -18,5 +18,7 @@ namespace CreditScore.Models.ViewModel
 
         public string Address { get; set; }
 
+        public long CompanyId { get; set; }
+
     }
 }

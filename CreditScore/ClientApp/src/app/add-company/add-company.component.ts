@@ -13,7 +13,8 @@ export class AddCompanyComponent implements OnInit {
   companyFormGroup: FormGroup
   submitted: boolean;
   companyDetails: CompanyDetail[];
-
+  isEdited: boolean;
+  hideColumn:boolean = true;
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
@@ -28,7 +29,8 @@ export class AddCompanyComponent implements OnInit {
       name: ['', Validators.required],
       address: ['', Validators.required],
       telephone: ['', Validators.required],
-      balance: ['', [Validators.required]]
+      balance: ['', [Validators.required]],
+        id: ['', [Validators.required]]
     });
 
     this.getAllCompany();
@@ -54,18 +56,18 @@ export class AddCompanyComponent implements OnInit {
 
 
   addCompany() {
-    let addCompanyDetail: CompanyDetail;
+    let companyDetail: CompanyDetail;
     let formControls = this.companyFormGroup.controls;
-    addCompanyDetail = {
+    companyDetail = {
       Name: formControls.name.value,
       Address: formControls.address.value,
       Telephone: formControls.telephone.value,
       Balance: Number(formControls.balance.value),
-      Id: 0,
+      Id: formControls.id.value,
     }
 
 
-    this.companyService.addCompany(addCompanyDetail)
+    this.companyService.addUpdateCompany(companyDetail)
       //.pipe(first())
       .subscribe(
         data => {
@@ -76,6 +78,7 @@ export class AddCompanyComponent implements OnInit {
             // this.userDetails = this.userDetails.slice();
             //this.userDetailSubject.next(data);
             //this.changeDectector(data);
+            this.getAllCompany();
           }
         }
         //error => {
@@ -83,6 +86,20 @@ export class AddCompanyComponent implements OnInit {
         //  this.loading = false;
         //}
       );
+  }
+
+  onSelectedRow(company: any) {
+    if (company != null) {
+      this.isEdited = true;
+      let formControls = this.companyFormGroup;
+      formControls.setValue({
+        name: company.name,
+        address: company.address,
+        telephone: company.telephone,
+        balance: company.balance,
+        id: company.id
+      })
+    }
   }
 
 

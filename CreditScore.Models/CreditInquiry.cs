@@ -34,6 +34,8 @@ namespace CreditScore.Models
 		public DateTime ModifiedDate { get; set; }
 		public long ModifiedBy { get; set; }
 
+		public virtual Customer Customer { get; set; }
+
 		
 	}
 }

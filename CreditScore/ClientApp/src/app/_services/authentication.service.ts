@@ -5,11 +5,13 @@ import { map } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
 import { User } from '../_models';
+import { Role } from '../_models/role';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
     private currentUserSubject: BehaviorSubject<User>;
     public currentUser: Observable<User>;
+    public isLoggedIn: boolean = true;
 
     constructor(private http: HttpClient) {
         this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
@@ -25,14 +27,20 @@ export class AuthenticationService {
             .pipe(map(user => {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
                 localStorage.setItem('currentUser', JSON.stringify(user));
-                this.currentUserSubject.next(user);
+              this.currentUserSubject.next(user);
+              this.isLoggedIn = true;
                 return user;
             }));
     }
 
+
+  public get isAdmin() {
+    return this.currentUser && this.currentUserValue.role === Role.Admin;
+  }
     logout() {
         // remove user from local storage to log user out
         localStorage.removeItem('currentUser');
-        this.currentUserSubject.next(null);
+      this.currentUserSubject.next(null);
+      this.isLoggedIn = false
     }
 }

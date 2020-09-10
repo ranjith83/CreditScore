@@ -22,10 +22,10 @@ namespace CreditScore.Controllers
         }
 
 
-        [HttpPost("AddCompany")]
-        public IActionResult AddUser(CompanyViewModel companyViewModel)
+        [HttpPost("AddUpdateCompany")]
+        public IActionResult AddUpdateCompany(CompanyViewModel companyViewModel)
         {
-            var response = _companyService.AddCompany(companyViewModel);
+            var response = _companyService.AddUpdateCompany(companyViewModel);
 
             if (response == null)
                 return BadRequest(new { message = "Company failed" });

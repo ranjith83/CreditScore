@@ -8,6 +8,7 @@ namespace CreditScore.Models
         public string FirstName { get; set; }
         public string SurName { get; set; }
         public string Username { get; set; }
+        public string Role { get; set; }
         public string Token { get; set; }
 
 
@@ -20,6 +21,7 @@ namespace CreditScore.Models
                 FirstName = user.FirstName;
                 SurName = user.SurName;
                 Username = user.UserName;
+                Role = user.Role;
                 Token = token;
             }
         }

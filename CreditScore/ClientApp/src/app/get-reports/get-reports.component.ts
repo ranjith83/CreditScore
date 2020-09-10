@@ -26,10 +26,13 @@ export class GetReportsComponent implements OnInit {
       data => {
         this.reportData = data;
         return data;
-      });
+        },
+        (error) => {
+          console.log(error);
+        });
   }
 
-    /*name of the excel-file which will be downloaded. */
+    ///*name of the excel-file which will be downloaded. */
     fileName = 'ExcelSheet.xlsx';
 
     exportexcel(): void {

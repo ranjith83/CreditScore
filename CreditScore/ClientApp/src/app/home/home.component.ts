@@ -10,8 +10,8 @@ export class HomeComponent {
 
   public userName;
   userScore: string;
-  customerDetails : any;
-
+  customerDetails: any;
+ // isLoggedIn: boolean = false;
   constructor(
     private authenticationService: AuthenticationService,
     private customerService: CustomerService
@@ -19,6 +19,7 @@ export class HomeComponent {
     // redirect to home if already logged in
     if (this.authenticationService.currentUserValue) {
       this.userName = this.authenticationService.currentUserValue.username
+     // this.isLoggedIn = true;
     }
   }
   //public loginuserName
@@ -26,7 +27,7 @@ export class HomeComponent {
   ngOnInit() {
 
     this.getUserScore();
-    //this.getAllCustomers();
+    this.getAllCustomers();
   }
 
   getUserScore() {

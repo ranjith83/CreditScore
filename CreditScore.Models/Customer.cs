@@ -15,7 +15,7 @@ namespace CreditScore.Models
         public string SurName { get; set; }
         public long Cell { get; set; }
         public string IDNumber { get; set; }
-
+        public long CompanyId { get; set; }
         public string Address { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]

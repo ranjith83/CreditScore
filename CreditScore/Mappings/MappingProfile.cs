@@ -20,6 +20,10 @@ namespace CreditScore.Mappings
             CreateMap<Customer, CustomerViewModel>();
 
             CreateMap<CustomerViewModel, Customer>();
+
+            CreateMap<UserViewModel, User>();
+
+            CreateMap<User, UserViewModel>();
         }
             //CreateMap<UsersViewModel, Users>()
             //    .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserName))

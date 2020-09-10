@@ -3,6 +3,7 @@ import { HttpClient, HttpEventType } from '@angular/common/http';
 import { CustomerService } from '../_services/customer.service'
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthenticationService } from '../_services';
 
 @Component({
   selector: 'app-bulk-upload',
@@ -14,6 +15,7 @@ export class BulkUploadComponent implements OnInit {
   loading = false;
   submitted = false;
   message: string;
+  companyID: number;
 
   public progress: number;
   public uploadMessage: string;
@@ -23,6 +25,7 @@ export class BulkUploadComponent implements OnInit {
     private customerService: CustomerService,
     private formBuilder: FormBuilder,
     private router: Router,
+    private authenticationService: AuthenticationService,
   ) { }
 
   ngOnInit() {
@@ -34,6 +37,7 @@ export class BulkUploadComponent implements OnInit {
       address: ['', Validators.required],
       idNumber: ['', [Validators.required]]
     });
+    this.companyID = this.authenticationService.currentUserValue.companyId;
   }
 
   get f() { return this.customerForm.controls; }
@@ -55,7 +59,8 @@ export class BulkUploadComponent implements OnInit {
       SurName: this.f.surName.value,
       Cell: this.f.cell.value,
       Address: this.f.address.value,
-      IdNumber: this.f.idNumber.value
+      IdNumber: this.f.idNumber.value,
+      CompanyId: this.companyID
     }
 
     this.customerService.addCustomer(addCustomerDetail)
@@ -78,6 +83,8 @@ export class BulkUploadComponent implements OnInit {
     let fileToUpload = <File>files[0];
     const formData = new FormData();
     formData.append('file', fileToUpload, fileToUpload.name);
+    formData.append('companyId', this.companyID.toString());
+    
 
     this.customerService.uploadFile(formData)
       .subscribe(event => {

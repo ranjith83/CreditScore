@@ -10,6 +10,7 @@ import { AddUsersComponent } from './add-users/add-users.component';
 import { LoginComponent } from './login';
 import { GetCustomerScoreComponent } from './get-customer-score/get-customer-score.component';
 import { GetReportsComponent } from './get-reports/get-reports.component';
+import { Role } from './_models/role';
 
 
 const appRoutes: Routes = [
@@ -19,8 +20,8 @@ const appRoutes: Routes = [
   { path: 'get-customer-score', component: GetCustomerScoreComponent, canActivate: [AuthGuard] },
   { path: 'customer-detail', component: CustomerDetailComponent, canActivate: [AuthGuard]},
   { path: 'bulk-upload', component: BulkUploadComponent, canActivate: [AuthGuard]},
-  { path: 'add-users', component: AddUsersComponent },
-  { path: 'add-company', component: AddCompanyComponent, canActivate: [AuthGuard]},
+  { path: 'add-users', component: AddUsersComponent, canActivate: [AuthGuard], data: { roles: [Role.Admin] } },
+  { path: 'add-company', component: AddCompanyComponent, canActivate: [AuthGuard], data: { roles: [Role.Admin] } },
   { path: 'get-reports', component: GetReportsComponent, canActivate: [AuthGuard]}
 
 ];

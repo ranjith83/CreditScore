@@ -12,6 +12,7 @@ export class GetCustomerScoreComponent implements OnInit {
   getCustomerScoreForm: FormGroup;
   userDetails: any;
   creditInquiries: any;
+  error: string;
 
   constructor(
     private customerService: CustomerService,
@@ -43,6 +44,10 @@ export class GetCustomerScoreComponent implements OnInit {
         this.creditInquiries = data;
         this.creditInquiries.idNumber = this.f.idNumber.value;
         return data;
+      },
+      (err) => {
+        this.error = err.error.message;
+        console.log(err);
       });
   }
 

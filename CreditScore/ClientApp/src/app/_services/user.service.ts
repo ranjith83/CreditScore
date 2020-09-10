@@ -54,7 +54,7 @@ export class UserService {
     //    console.log(data);
     //  });
 
-    return this.http.post<UserDetail>(this.url + 'AddUser', userDetail, options);
+    return this.http.post<UserDetail>(this.url + 'AddUpdateUser', userDetail, options);
       
   }
 }
